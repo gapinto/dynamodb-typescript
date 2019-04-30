@@ -38,7 +38,7 @@ export interface IEquipmentRepository extends IDynamoRepository<Equipment>  { }
 ```
 
 5- Create a service like as:
-```
+```typescript
 import { EventEmitter } from "events";
 import { Equipment } from "../domain/Equipment";
 import { IEquipmentRepository } from "../domain/IEquipmentRepository";

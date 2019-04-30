@@ -19,7 +19,7 @@ import { Entity } from "../../dynamodb-typescript/domain/Entity";
 @Model(process.env.DYNAMODB_EQUIPMENT_TABLE)
 export class Equipment extends Entity {}
 ```
-3. Create a Repository like as:
+3. Create a Repository:
 
 ```typescript
 import { Equipment } from "../domain/Equipment"

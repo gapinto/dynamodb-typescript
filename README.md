@@ -26,9 +26,7 @@ import { Equipment } from "../domain/Equipment"
 import { IEquipmentRepository } from "../domain/IEquipmentRepository";
 import { DynamoRepository } from "../../dynamodb-typescript/infrastructure/DynamoRepository";
 
-export class EquipmentRepository extends DynamoRepository<Equipment> implements IEquipmentRepository {
-    
-}
+export class EquipmentRepository extends DynamoRepository<Equipment> implements IEquipmentRepository {}
 ```
 
 4. Create a interface to Repository like as:
@@ -36,9 +34,40 @@ export class EquipmentRepository extends DynamoRepository<Equipment> implements 
 import { Equipment } from "./Equipment";
 import { IDynamoRepository } from "../../dynamodb-typescript/domain/IDynamoRepository";
 
-export interface IEquipmentRepository extends IDynamoRepository<Equipment>  {  
+export interface IEquipmentRepository extends IDynamoRepository<Equipment>  { }
+```
+
+5- Create a service like as:
+```
+import { EventEmitter } from "events";
+import { Equipment } from "../domain/Equipment";
+import { IEquipmentRepository } from "../domain/IEquipmentRepository";
+import { EquipmentRepository } from "../infrastructure/EquipmentRepository";
+
+export class DeleteEquipment extends EventEmitter {
+
+    private _equipmentRepository: IEquipmentRepository;
+    
+    constructor(equipmentRepository: IEquipmentRepository = new EquipmentRepository()) {
+        super();
+        this._equipmentRepository = equipmentRepository; 
+    }
+
+    public execute(equipmentData: Equipment) {
+        const equipment = new Equipment();
+        equipment.id = equipmentData.id;
+
+        return this._equipmentRepository.remove(equipment)
+        .on("SUCCESS", (equipment) => {
+            super.emit("SUCCESS", equipment)
+        })
+        .on("ERROR", (error) => {
+            super.emit("ERROR", "Internal Error");
+        })
+        .execute();
+    }
 }
 ```
 
-
+- Note: `EquipmentRepository` could have been injected, but for now that's it.
 
